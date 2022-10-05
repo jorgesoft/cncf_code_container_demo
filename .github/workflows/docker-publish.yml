@@ -34,3 +34,17 @@ jobs:
         context: .
         push: true
         tags: gorje6/django-demo-app:latest
+
+###### Star scanning after image is built and pushed        
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'docker.io/gorje6/django-demo-app:latest'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
